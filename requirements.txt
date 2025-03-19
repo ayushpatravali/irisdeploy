@@ -39,13 +39,14 @@ seaborn>=0.11.0
 # tensorflow>=2.4.0,<=2.13.1  # TF exports (-cpu, -aarch64, -macos)
 # tensorflowjs>=3.9.0  # TF.js export
 # openvino-dev>=2023.0  # OpenVINO export
+streamlit>=1.43.2
 
 # Deploy ----------------------------------------------------------------------
 setuptools>=70.0.0 # Snyk vulnerability fix
 # tritonclient[all]~=2.24.0
 
 # Extras ----------------------------------------------------------------------
-# ipython  # interactive notebook
+ipython  # interactive notebook
 # mss  # screenshots
 # albumentations>=1.0.3
 # pycocotools>=2.0.6  # COCO mAP
