@@ -8,8 +8,8 @@ import torch
 # -----------------------------
 # Global Variables and Settings
 # -----------------------------
-# Default model path for YOLO iris & pupil detection (adjust this path as needed)
-default_model_path = r"D:\SENSEMI\yolov5\runs\train\exp\weights\best.pt"
+# Default model path for YOLO iris & pupil detection (use a relative path)
+default_model_path = "weights/best.pt"  # Ensure your weights file is in the 'weights' folder
 
 # Class indices for iris and pupil (update according to your dataset)
 IRIS_CLASS = 0   # Example: Class ID for iris
