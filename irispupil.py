@@ -4,7 +4,6 @@ import cv2
 import os
 import numpy as np
 import torch
-import sys
 
 # -----------------------------
 # Global Variables and Settings
@@ -121,15 +120,12 @@ def detect_iris_and_pupil(image, model=None, model_path=default_model_path):
         ratio_text (str): A text string of the calculated ratio if both iris and pupil are detected.
     """
     if model is None:
-        # Get the absolute path to the yolov5 repository.
-        yolov5_path = os.path.abspath("yolov5")
-        sys.path.insert(0, yolov5_path)
+        # Directly import attempt_load from the cloned yolov5 repository.
         try:
-            from models.experimental import attempt_load
+            from yolov5.models.experimental import attempt_load
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
-                f"Could not import 'models.experimental' from the YOLOv5 directory at {yolov5_path}. "
-                "Please ensure the yolov5 folder is at the root of your repository and has the correct structure."
+                "Could not import 'yolov5.models.experimental'. Please ensure the yolov5 folder is at the root of your repository and has the correct structure."
             ) from e
         model = attempt_load(model_path, map_location="cpu")
 
@@ -164,4 +160,3 @@ def detect_iris_and_pupil(image, model=None, model_path=default_model_path):
         ratio_text = f"Iris-to-Pupil Ratio: {ratio:.2f}"
     
     return annotated_image, ratio_text
-
