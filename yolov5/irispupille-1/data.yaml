@@ -1,0 +1,7 @@
+names:
+- iris
+- pupille
+nc: 2
+test: "D:\\SENSEMI\\yolov5\\irispupille-1\\test\\images"
+train: "D:\\SENSEMI\\yolov5\\irispupille-1\\train\\images"
+val: "D:\\SENSEMI\\yolov5\\irispupille-1\\valid\\images"
