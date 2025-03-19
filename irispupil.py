@@ -121,11 +121,8 @@ def detect_iris_and_pupil(image, model=None, model_path=default_model_path):
         ratio_text (str): A text string of the calculated ratio if both iris and pupil are detected.
     """
     if model is None:
-        # Get the absolute path to the yolov5 repository
+        # Get the absolute path to the yolov5 repository.
         yolov5_path = os.path.abspath("yolov5")
-        # Debug: Uncomment to verify the folder structure on deployment
-        # print("YOLOv5 absolute path:", yolov5_path)
-        # print("Directory contents:", os.listdir(yolov5_path))
         sys.path.insert(0, yolov5_path)
         try:
             from models.experimental import attempt_load
@@ -153,4 +150,18 @@ def detect_iris_and_pupil(image, model=None, model_path=default_model_path):
             if int(cls) == IRIS_CLASS:
                 iris_width = width
                 color = (255, 0, 0)  # Blue for iris.
-            elif int(cls) == PUPIL_CLA
+            elif int(cls) == PUPIL_CLASS:
+                pupil_width = width
+                color = (0, 255, 0)  # Green for pupil.
+            else:
+                color = (0, 0, 255)  # Red for others.
+            
+            cv2.rectangle(annotated_image, (int(x_min), int(y_min)), (int(x_max), int(y_max)), color, 2)
+    
+    ratio_text = "Ratio: Not Detected"
+    if iris_width is not None and pupil_width is not None and pupil_width != 0:
+        ratio = iris_width / pupil_width
+        ratio_text = f"Iris-to-Pupil Ratio: {ratio:.2f}"
+    
+    return annotated_image, ratio_text
+
