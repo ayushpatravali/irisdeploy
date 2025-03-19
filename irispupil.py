@@ -120,7 +120,8 @@ def detect_iris_and_pupil(image, model=None, model_path=default_model_path):
         ratio_text (str): A text string of the calculated ratio if both iris and pupil are detected.
     """
     if model is None:
-        model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload=True)
+        model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload=True, trust_repo=True)
+
 
     results = model(image)
     annotated_image = image.copy()
