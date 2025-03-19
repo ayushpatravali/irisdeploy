@@ -32,19 +32,19 @@ if img_file is not None:
     img = cv2.imdecode(file_bytes, 1)
     
     st.subheader("Original Image")
-    st.image(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), use_column_width=True)
+    st.image(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), use_container_width=True)
     
     # Initialize or update person counter.
     if "person_counter" not in st.session_state:
         st.session_state.person_counter = 1
 
     # --- Step 1: Eye Detection ---
-    # This function detects eyes, annotates the image, and (if enabled) saves cropped eye images.
+    st.write("Running eye detection...")
     annotated_img, eyes = detect_face_and_eyes(
         img, save_detected=save_detect, person_counter=st.session_state.person_counter
     )
     st.subheader("Eye Detection")
-    st.image(cv2.cvtColor(annotated_img, cv2.COLOR_BGR2RGB), use_column_width=True)
+    st.image(cv2.cvtColor(annotated_img, cv2.COLOR_BGR2RGB), use_container_width=True)
     
     if save_detect:
         st.success(f"Detected eyes saved for person {st.session_state.person_counter}.")
@@ -71,7 +71,7 @@ if img_file is not None:
         if enhanced_results:
             st.write("Enhanced images:")
             for fname, enh_img in enhanced_results:
-                st.image(enh_img, caption=f"Enhanced: {fname}", use_column_width=True)
+                st.image(enh_img, caption=f"Enhanced: {fname}", use_container_width=True)
         else:
             st.info("No detected eye images found to enhance.")
         
@@ -83,16 +83,18 @@ if img_file is not None:
             if filename.lower().endswith(('.jpg', '.png', '.jpeg')):
                 # Read the enhanced image.
                 enh_img = cv2.imread(enhanced_path)
+                # If the image is single-channel (grayscale), convert to BGR.
+                if len(enh_img.shape) == 2 or enh_img.shape[2] == 1:
+                    enh_img = cv2.cvtColor(enh_img, cv2.COLOR_GRAY2BGR)
                 # Run iris & pupil detection using the YOLO model.
                 detection_img, ratio_text = detect_iris_and_pupil(enh_img)
-                # Optionally, you can save the detection image back to a folder (or display it).
                 detection_results.append((filename, detection_img, ratio_text))
         
         if detection_results:
             for fname, det_img, ratio in detection_results:
                 st.image(cv2.cvtColor(det_img, cv2.COLOR_BGR2RGB),
                          caption=f"Detection on {fname}: {ratio}",
-                         use_column_width=True)
+                         use_container_width=True)
         else:
             st.info("No enhanced images found for iris & pupil detection.")
         
