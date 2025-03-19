@@ -4,7 +4,6 @@ import cv2
 import os
 import numpy as np
 import torch
-import sys
 
 # -----------------------------
 # Global Variables and Settings
@@ -121,8 +120,10 @@ def detect_iris_and_pupil(image, model=None, model_path=default_model_path):
         ratio_text (str): A text string of the calculated ratio if both iris and pupil are detected.
     """
     if model is None:
-        # Use local YOLOv5 clone to load the model
-        sys.path.insert(0, 'yolov5')  # Add YOLOv5 repository to the Python path
+        import sys
+        # Construct the absolute path for the yolov5 repository
+        yolov5_path = os.path.join(os.getcwd(), "yolov5")
+        sys.path.insert(0, yolov5_path)  # Add YOLOv5 repository to the Python path
         from models.experimental import attempt_load
         model = attempt_load(model_path, map_location="cpu")
 
