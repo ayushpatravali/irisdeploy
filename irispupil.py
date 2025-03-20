@@ -1,5 +1,3 @@
-# irispupil.py
-
 import cv2
 import os
 import numpy as np
@@ -8,8 +6,8 @@ import torch
 # -----------------------------
 # Global Variables and Settings
 # -----------------------------
-# Default model path for YOLO iris & pupil detection (use a relative path)
-default_model_path = "weights/best.pt"  # Ensure your weights file is in the 'weights' folder
+# Default model path for YOLO iris & pupil detection (adjust this path as needed)
+default_model_path = r"D:\SENSEMI\yolov5\runs\train\exp\weights\best.pt"
 
 # Class indices for iris and pupil (update according to your dataset)
 IRIS_CLASS = 0   # Example: Class ID for iris
@@ -105,7 +103,7 @@ def enhance_image(image):
 # -----------------------------
 # Function 3: Iris & Pupil Detection via YOLO
 # -----------------------------
-def detect_iris_and_pupil(image, model=None, model_path=default_model_path):
+def detect_iris_and_pupil(image, model=None, model_path=default_model_path, conf_threshold=0.5):
     """
     Uses a fine-tuned YOLO model to detect iris and pupil in the image.
     Draws bounding boxes and calculates the iris-to-pupil ratio.
@@ -114,20 +112,14 @@ def detect_iris_and_pupil(image, model=None, model_path=default_model_path):
         image (np.array): Input image (BGR format).
         model: YOLO model instance. If None, the model is loaded using model_path.
         model_path (str): Path to the YOLO model weights.
+        conf_threshold (float): Minimum confidence threshold for detections.
         
     Returns:
         annotated_image (np.array): Image annotated with detection boxes.
         ratio_text (str): A text string of the calculated ratio if both iris and pupil are detected.
     """
     if model is None:
-        # Directly import attempt_load from the cloned yolov5 repository.
-        try:
-            from yolov5.models.experimental import attempt_load
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                "Could not import 'yolov5.models.experimental'. Please ensure the yolov5 folder is at the root of your repository and has the correct structure."
-            ) from e
-        model = attempt_load(model_path, map_location="cpu")
+        model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path, force_reload=True)
 
     results = model(image)
     annotated_image = image.copy()
@@ -135,12 +127,14 @@ def detect_iris_and_pupil(image, model=None, model_path=default_model_path):
     iris_width = None
     pupil_width = None
 
-    # Use the predictions tensor (results.pred). Each row in results.pred[0] is:
-    # [x1, y1, x2, y2, conf, cls]
+    # Each row in results.pred[0] is: [x1, y1, x2, y2, conf, cls]
     if len(results.pred) > 0 and results.pred[0] is not None and results.pred[0].shape[0] > 0:
         preds = results.pred[0].cpu().numpy()
         for det in preds:
             x_min, y_min, x_max, y_max, conf, cls = det
+            # Skip detections below the confidence threshold
+            if conf < conf_threshold:
+                continue
             width = x_max - x_min
 
             if int(cls) == IRIS_CLASS:
