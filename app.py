@@ -90,9 +90,12 @@ if img_file is not None:
                     detection_results.append((filename, detection_img, ratio_text))
             if detection_results:
                 for fname, det_img, ratio in detection_results:
-                    st.image(cv2.cvtColor(det_img, cv2.COLOR_BGR2RGB),
-                             caption=f"Detection on {fname}: {ratio}",
-                             use_column_width=True)
+                    st.image(cv2.cvtColor(det_img, cv2.COLOR_BGR2RGB), use_column_width=True)
+                    st.markdown(f"""
+                        <div style="text-align: center; font-size: 18px; font-weight: bold; margin-top: 10px;">
+                            Detection on <i>{fname}</i>: Iris-to-Pupil Ratio: {ratio}
+                        </div>
+                    """, unsafe_allow_html=True)
         else:
             st.info("Detected eyes were not saved. Enable 'Save Detected Eyes' in the sidebar to run the full pipeline.")
 
@@ -104,8 +107,11 @@ if img_file is not None:
         detection_img, ratio_text = detect_iris_and_pupil(img)
         processed_path = os.path.join(processed_eyes_dir, filename)
         cv2.imwrite(processed_path, detection_img)
-        st.image(cv2.cvtColor(detection_img, cv2.COLOR_BGR2RGB),
-                 caption=f"Detection on {filename}: {ratio_text}",
-                 use_column_width=True)
+        st.image(cv2.cvtColor(detection_img, cv2.COLOR_BGR2RGB), use_column_width=True)
+        st.markdown(f"""
+            <div style="text-align: center; font-size: 18px; font-weight: bold; margin-top: 10px;">
+                Detection on <i>{filename}</i>: Iris-to-Pupil Ratio: {ratio_text}
+            </div>
+        """, unsafe_allow_html=True)
 
     st.sidebar.success("Processing complete!")
