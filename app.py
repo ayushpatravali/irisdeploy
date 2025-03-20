@@ -24,12 +24,12 @@ for folder in [detected_eyes_dir, enhanced_eyes_dir, processed_eyes_dir]:
 
 # Configure the Streamlit page.
 st.set_page_config(page_title="Iris & Pupil Detection", layout="wide")
-st.title("Iris & Pupil Detection App")
+st.title("👁️ Iris & Pupil Detection App")
 
 # Sidebar options.
-st.sidebar.header("Options")
-save_detect = st.sidebar.checkbox("Save Detected Eyes", value=True)
-input_mode = st.sidebar.radio("Select Input Mode", ("Camera", "Upload Raw Image", "Upload Enhanced Image"))
+st.sidebar.header("⚙️ Options")
+save_detect = st.sidebar.checkbox("✅ Save Detected Eyes", value=True)
+input_mode = st.sidebar.radio("📸 Select Input Mode", ("Camera", "Upload Raw Image", "Upload Enhanced Image"))
 
 # Get image input.
 if input_mode == "Camera":
@@ -43,7 +43,7 @@ if img_file is not None:
     file_bytes = np.asarray(bytearray(img_file.read()), dtype=np.uint8)
     img = cv2.imdecode(file_bytes, 1)
 
-    st.subheader("Original Image")
+    st.subheader("📷 Original Image")
     st.image(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), use_column_width=True)
 
     # Initialize or update person counter.
@@ -55,15 +55,15 @@ if img_file is not None:
         annotated_img, eyes = detect_face_and_eyes(
             img, save_detected=save_detect, person_counter=st.session_state.person_counter
         )
-        st.subheader("Eye Detection")
+        st.subheader("👁️ Eye Detection")
         st.image(cv2.cvtColor(annotated_img, cv2.COLOR_BGR2RGB), use_column_width=True)
 
         if save_detect:
-            st.success(f"Detected eyes saved for person {st.session_state.person_counter}.")
+            st.success(f"✅ Detected eyes saved for person {st.session_state.person_counter}.")
             st.session_state.person_counter += 1
 
             # --- Step 2: Image Enhancement on Detected Eyes ---
-            st.subheader("Enhancing Detected Eyes")
+            st.subheader("⚡ Enhancing Detected Eyes")
             enhanced_results = []
             for filename in os.listdir(detected_eyes_dir):
                 if filename.lower().endswith(('.jpg', '.png', '.jpeg')):
@@ -75,10 +75,10 @@ if img_file is not None:
                     enhanced_results.append((filename, enhanced))
             if enhanced_results:
                 for fname, enh_img in enhanced_results:
-                    st.image(enh_img, caption=f"Enhanced: {fname}", use_column_width=True)
+                    st.image(enh_img, caption=f"✨ Enhanced: {fname}", use_column_width=True)
 
             # --- Step 3: Iris & Pupil Detection on Enhanced Eyes ---
-            st.subheader("Iris & Pupil Detection on Enhanced Eyes")
+            st.subheader("🎯 Iris & Pupil Detection on Enhanced Eyes")
             detection_results = []
             for filename in os.listdir(enhanced_eyes_dir):
                 if filename.lower().endswith(('.jpg', '.png', '.jpeg')):
@@ -92,15 +92,27 @@ if img_file is not None:
                 for fname, det_img, ratio in detection_results:
                     st.image(cv2.cvtColor(det_img, cv2.COLOR_BGR2RGB), use_column_width=True)
                     st.markdown(f"""
-                        <div style="text-align: center; font-size: 18px; font-weight: bold; margin-top: 10px;">
-                            Detection on <i>{fname}</i>: Iris-to-Pupil Ratio: {ratio}
+                        <div style="
+                            text-align: center; 
+                            font-size: 24px; 
+                            font-weight: bold; 
+                            color: #ff4b4b; 
+                            background-color: #f8f9fa; 
+                            border: 2px solid #ff4b4b; 
+                            padding: 10px; 
+                            border-radius: 10px; 
+                            margin-top: 15px;">
+                            🚀 Detection on <i>{fname}</i>: <br> 
+                            <span style="color: #28a745; font-size: 28px;">
+                                Iris-to-Pupil Ratio: {ratio}
+                            </span>
                         </div>
                     """, unsafe_allow_html=True)
         else:
-            st.info("Detected eyes were not saved. Enable 'Save Detected Eyes' in the sidebar to run the full pipeline.")
+            st.info("⚠️ Detected eyes were not saved. Enable 'Save Detected Eyes' in the sidebar to run the full pipeline.")
 
     elif input_mode == "Upload Enhanced Image":
-        st.subheader("Using Uploaded Enhanced Image for Detection")
+        st.subheader("📝 Using Uploaded Enhanced Image for Detection")
         filename = img_file.name
         enhanced_path = os.path.join(enhanced_eyes_dir, filename)
         cv2.imwrite(enhanced_path, img)
@@ -109,9 +121,21 @@ if img_file is not None:
         cv2.imwrite(processed_path, detection_img)
         st.image(cv2.cvtColor(detection_img, cv2.COLOR_BGR2RGB), use_column_width=True)
         st.markdown(f"""
-            <div style="text-align: center; font-size: 18px; font-weight: bold; margin-top: 10px;">
-                Detection on <i>{filename}</i>: Iris-to-Pupil Ratio: {ratio_text}
+            <div style="
+                text-align: center; 
+                font-size: 24px; 
+                font-weight: bold; 
+                color: #ff4b4b; 
+                background-color: #f8f9fa; 
+                border: 2px solid #ff4b4b; 
+                padding: 10px; 
+                border-radius: 10px; 
+                margin-top: 15px;">
+                🚀 Detection on <i>{filename}</i>: <br> 
+                <span style="color: #28a745; font-size: 28px;">
+                    Iris-to-Pupil Ratio: {ratio_text}
+                </span>
             </div>
         """, unsafe_allow_html=True)
 
-    st.sidebar.success("Processing complete!")
+    st.sidebar.success("🎉 Processing complete!")
